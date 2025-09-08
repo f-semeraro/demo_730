@@ -1,0 +1,21 @@
+{
+  "data": [
+    {"key": "BACKLIGHT_ON-0"},
+    {"key": "BASEPATHFILE"},
+    {"key": "BRIGHTNESS_PERC-0"},
+    {"key": "AUDIO_VOLUME"},
+    {"key": "TEMPERATURE_INTERNAL-0"},
+    {"key": "BRIGHTNESS_MODE-0"},
+    {"key": "BRIGHTNESS_MANUAL_MODE"},
+    {"key": "BRIGHTNESS_MANUAL_LEVEL"},
+    {"key": "TTS_LINE_TEXT_0"},
+    {"key": "TTS_START_ACTION"},
+    {"key": "TTS_BUSY"},
+    {"key": "MODEM_APN"},
+    {"key": "MODEM_AUTHENTICATION_MODE"},
+    {"key": "MODEM_PASSWORD"},
+    {"key": "MODEM_USER"},
+
+    {"key": "LOCAL_IP_0"}
+  ]
+}

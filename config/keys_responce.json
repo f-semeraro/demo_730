@@ -1,0 +1,69 @@
+{
+  "data": [
+    {
+      "group": "Settings",
+      "key": "BASEPATHFILE",
+      "notifiable": "false",
+      "notified": "false",
+      "persisted": "false",
+      "rc": "false",
+      "sb": "",
+      "type": "string",
+      "typeOptions": "",
+      "value": "/mnt/data/aesys/UDisplay/docroot/",
+      "writable": "false"
+    },
+    {
+      "group": "Display Settings",
+      "key": "AUDIO_VOLUME",
+      "notifiable": "true",
+      "notified": "false",
+      "persisted": "true",
+      "rc": "true",
+      "sb": "0",
+      "type": "int",
+      "typeOptions": "0,100",
+      "value": "50",
+      "writable": "true"
+    },
+    {
+      "group": "Network",
+      "key": "LOCAL_IP_0",
+      "notifiable": "true",
+      "notified": "false",
+      "persisted": "false",
+      "rc": "false",
+      "sb": "",
+      "type": "",
+      "typeOptions": "",
+      "value": "192.168.70.134",
+      "writable": "false"
+    },
+    {
+      "group": "Alarms",
+      "key": "ALARM_1",
+      "notifiable": "true",
+      "notified": "false",
+      "persisted": "false",
+      "rc": "false",
+      "sb": "",
+      "type": "",
+      "typeOptions": "",
+      "value": "Temperature higher than 50°C",
+      "writable": "false"
+    },
+    {
+      "group": "Alarms",
+      "key": "ALARM_2",
+      "notifiable": "true",
+      "notified": "false",
+      "persisted": "false",
+      "rc": "false",
+      "sb": "",
+      "type": "",
+      "typeOptions": "",
+      "value": "Volume higher than 50",
+      "writable": "false"
+    }
+  ]
+}

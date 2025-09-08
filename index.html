@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Menu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="menu1" class="menu active">
+    <div class="header">
+     <div>Page de maintenance </div>
+     <div> <img src="img/sncf_logo.png" alt="SNCF Logo" class="logo"> </div>
+    </div>
+  </div>
+
+  <div id="menu2" class="menu">
+    <div class="header">
+     <div> Paramètres </div>
+     <div> <img src="img/sncf_logo.png" alt="SNCF Logo" class="logo"> </div>
+    </div>
+    <div class="section-container">
+    </div>
+  </div>
+
+
+
+<div id="modal" class="modal hidden">
+  <div class="modal-content">
+    <h2 id="modal-key-title">Clés</h2>
+    <input type="text" id="modal-value-input" class="modal-input" />
+    <button id="modal-trigger-button" class="modal-trigger hidden">Déclencher</button>
+  </div>
+</div>
+
+  <script src="app/jquery-3.2.1.min.js"></script>
+  <script src="app/udisplayCalls.js"></script>
+  <script src="app/script.js"></script>
+</body>
+
+
+</html>
+
