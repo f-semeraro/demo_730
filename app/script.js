@@ -1,335 +1,143 @@
 const menus = [document.getElementById('menu1'), document.getElementById('menu2')];
-let currentMenuIndex = 0;
-let currentIndex = 0;
-
-let selectedGroupIndex = 0;
-let selectedKeyIndex = 0;
-
 let myUdisplayCalls = new udisplayCalls();
-
-let loadedKeys = [];
-
-let baseUrl = "";
 let keysByGroup = {};
 let groupList = [];
+let currentMenuIndex = 0;
+let currentGroup = "";
+
+// Init
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadBaseUrl();
   await loadKeysAndPopulate();
-  setInterval(() => {
-    if (currentMenuIndex === 1) {
-      refreshValuesForCurrentGroup();
-    }
-  }, 8000);
+  updateHeaderTime();
+  setInterval(updateHeaderTime, 1000 * 60);
 });
 
-async function loadBaseUrl() {
-  try {
-    const response = await fetch("config/config.json");
-    const config = await response.json();
-    baseUrl = config.baseUrl;
-  } catch (err) {
-    console.error("Impossibile caricare app/config.json:", err);
-  }
-}
+
 
 async function loadKeysAndPopulate() {
-  try {
-    const response = await fetch("config/keys_config.json");
-    const json_keys = await response.json();
-    const result = await fetch("config/keys_responce.json");
-    const json_response = await result.json();
 
-    loadedKeys = json_response.data;
-    keysByGroup = {};
-    groupList = [];
+  const result = await fetch("config/keys_responce.json");
+  const json_response = await result.json();
+  keysByGroup = {};
+  groupList = [];
 
-    loadedKeys.forEach(entry => {
-      if (!keysByGroup[entry.group]) {
-        keysByGroup[entry.group] = [];
-        groupList.push(entry.group);
-      }
-      keysByGroup[entry.group].push(entry);
-    });
-
-  
-    groupList.push("Exit");
-
-    populateGroups();
-  } catch (err) {
-    console.error("Errore nel caricamento delle chiavi:", err);
-  }
+  json_response.data.forEach(entry => {
+    if (!keysByGroup[entry.group]) {
+      keysByGroup[entry.group] = [];
+      groupList.push(entry.group);
+    }
+    keysByGroup[entry.group].push(entry);
+  });
+  showGroups();
 }
 
-function populateGroups() {
+function showGroups() {
   const menu1 = document.getElementById("menu1");
-  const existing = menu1.querySelectorAll(".section:not(.header)");
-  existing.forEach(el => el.remove());
-
-  groupList.forEach((group, index) => {
+  menu1.innerHTML = "";
+  groupList.forEach(group => {
     const div = document.createElement("div");
-    div.classList.add("section");
-   // if (index === selectedGroupIndex) div.classList.add("selected");
+    div.className = "section";
     div.textContent = group;
+    div.onclick = () => {
+      if (group === "Exit") window.location.href = "login.html";
+      else {
+        currentGroup = group;
+        showKeys(group);
+        switchMenu(1);
+      }
+    };
     menu1.appendChild(div);
   });
+  updateNavBar();
 }
 
-async function populateKeysForGroup(group) {
-  const sectionContainer = document.querySelector("#menu2 .section-container");
-  sectionContainer.innerHTML = "";
-
- 
-
-  if (!keysByGroup[group]) return;
-
-    keysByGroup[group].forEach(entry => {
+function showKeys(group) {
+  const container = document.querySelector("#menu2");
+  container.innerHTML = "";
+  (keysByGroup[group] || []).forEach(entry => {
     const div = document.createElement("div");
-    div.classList.add("section");
-
-    const keyDiv = document.createElement("div");
-    keyDiv.classList.add("key-column");
-    keyDiv.textContent = entry.key;
-
-    const valueDiv = document.createElement("div");
-    valueDiv.classList.add("value-column");
-    if(entry.value === "#button#"){
-      valueDiv.textContent = "";
-    }
-    else{
-      valueDiv.textContent = entry.value;
-    }
-   
-
-    div.appendChild(keyDiv);
-    div.appendChild(valueDiv);
-    sectionContainer.appendChild(div);
+    div.className = "section";
+    // div.textContent = `${entry.key}: ${entry.value}`;
+    div.innerHTML = `<div class='key-column'>${entry.key}</div><div class='value-column'>${entry.value}</div>`;
+    div.onclick = () => {
+      if (group === "Alarms") openModal(entry);
+    };
+    container.appendChild(div);
   });
-  
+  updateNavBar();
 }
 
-async function refreshValuesForCurrentGroup() {
-  const selectedGroup = menus[0].querySelector(".section")?.textContent;
-  if (!selectedGroup) return;
-
-  // Ricarica TUTTE le chiavi, aggiornando anche keysByGroup
-  await loadKeysAndPopulate();
-
-  const updatedKeys = keysByGroup[selectedGroup];
-  if (!updatedKeys) return;
-
-  const sectionContainer = document.querySelector("#menu2 .section-container");
-  const keyElements = sectionContainer.querySelectorAll(".section");
-
-  updatedKeys.forEach((entry, index) => {
-    const valueDiv = keyElements[index]?.querySelector(".value-column");
-    if (valueDiv && entry.value !== "#button#") {
-      valueDiv.textContent = entry.value;
-    }
-  });
-}
-
-
-
-function getCurrentSections() {
-  return menus[currentMenuIndex].querySelectorAll(".section");
-}
-
-function clearSelection(sections) {
-  sections.forEach(s => s.classList.remove("selected"));
-}
-
-function switchMenu(toIndex) {
+function switchMenu(idx) {
   menus[currentMenuIndex].classList.remove('active');
-  currentMenuIndex = toIndex;
+  currentMenuIndex = idx;
   menus[currentMenuIndex].classList.add('active');
+  updateNavBar();
+}
 
-  const sections = getCurrentSections();
-  clearSelection(sections);
-
-  // Imposta currentIndex in base al menu attivo
-  if (currentMenuIndex === 0) {
-    currentIndex = selectedGroupIndex;
-  } else {
-    currentIndex = 0; // Seleziona sempre il primo elemento nella pagina delle chiavi
+function openModal(item) {
+  modalKeyTitle.textContent = item.key;
+  document.getElementById('modal-value-text').textContent = item.sb || item.value;
+  // Rimuovi eventuale video/iframe precedente
+  const oldVideo = document.getElementById('modal-video');
+  if (oldVideo) oldVideo.remove();
+  const oldPdf = document.getElementById('modal-pdf');
+  if (oldPdf) oldPdf.remove();
+  if (item.key === "ERR_CONN") {
+    const video = document.createElement('video');
+    video.id = 'modal-video';
+    video.src = 'img/alarm1.mp4';
+    video.controls = false;
+    video.autoplay = true;
+    video.loop = true;
+    video.style.width = '80%';
+    video.style.maxHeight = '60vh';
+    video.style.background = 'white';
+    video.style.objectFit = 'contain';
+    video.style.margin = '20px auto';
+    modalKeyTitle.insertAdjacentElement('afterend', video);
   }
+  if (item.key === "ERR_UPDATE") {
+    const pdf = document.createElement('iframe');
+    pdf.id = 'modal-pdf';
+    pdf.src = 'doc/manual.pdf#page=109';
+    pdf.style.width = '100%';
+    pdf.style.height = '80vh';
+    pdf.style.border = 'none';
+    pdf.setAttribute('allowfullscreen', '');
+    modalKeyTitle.insertAdjacentElement('afterend', pdf);
+  }
+  modal.classList.remove("hidden");
+}
 
-  if (sections[currentIndex]) {
-   // sections[currentIndex].classList.add('selected');
-    sections[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+function updateNavBar() {
+  const navBar = document.getElementById("nav-bar");
+  navBar.innerHTML = "";
+  if (currentMenuIndex === 0) {
+    navBar.innerHTML = `<span class='nav-link nav-active'>Groups</span>`;
   } else {
-    currentIndex = 0;
+    navBar.innerHTML = `<span class='nav-link nav-back'>&larr; Groups</span> <span class='nav-sep'>&rarr;</span> <span class='nav-link nav-active'>${currentGroup}</span>`;
+    navBar.querySelector('.nav-back').onclick = () => {
+      switchMenu(0);
+      updateNavBar();
+    };
   }
 }
 
-
-document.addEventListener('keydown', async (e) => {
-  if (!modal.classList.contains('hidden')) {
-    if (e.key === "Escape") {
-      modal.classList.add("hidden");
-    } else if (e.key === "Enter") {
-      const key = modalKeyTitle.textContent;
-      let value;
-
-      switch (modalValueInput.type) {
-        case "checkbox":
-          value = modalValueInput.checked ? "1" : "0";
-          break;
-        default:
-          value = modalValueInput.value;
-      }
-
-      const selectedGroupElement = menus[0].querySelector(".section.selected");
-      const selectedGroup = selectedGroupElement ? selectedGroupElement.textContent : null;
-
-      if (value === "#button#") {
-        await myUdisplayCalls.triggerUdisplayButton(key, baseUrl);
-      } else {
-        await myUdisplayCalls.updateUdisplayKey(key, value, baseUrl);
-      }
-      await loadKeysAndPopulate();
-
-      if (currentMenuIndex === 1 && selectedGroup) {
-        populateKeysForGroup(selectedGroup);
-      }
-
-      modal.classList.add("hidden");
-      const sections = getCurrentSections();
-      clearSelection(sections);
-     if (sections[currentIndex]) {
-       // sections[currentIndex].classList.add("selected");
-        sections[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } else {
-        currentIndex = 0;
-      }
-    }
-    return;
-  }
-
-  const sections = getCurrentSections();
-
-  if (e.key === "ArrowDown" && currentIndex < sections.length - 1) {
-    clearSelection(sections);
-    currentIndex++;
-    if (currentMenuIndex === 0) {
-      selectedGroupIndex = currentIndex;
-    } else {
-      selectedKeyIndex = currentIndex;
-    }
-    if (sections[currentIndex]) {
-      //sections[currentIndex].classList.add("selected");
-      sections[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else {
-      currentIndex = 0;
-    }
-
-  } else if (e.key === "ArrowUp" && currentIndex > 0) {
-    clearSelection(sections);
-    currentIndex--;
-    if (currentMenuIndex === 0) {
-      selectedGroupIndex = currentIndex;
-    } else {
-      selectedKeyIndex = currentIndex;
-    }
-     if (sections[currentIndex]) {
-      //sections[currentIndex].classList.add("selected");
-      sections[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else {
-      currentIndex = 0;
-    }
-
-  } else if (e.key === "ArrowRight" && currentMenuIndex === 0) {
-    const selectedGroup = sections[currentIndex].textContent;
-    if(selectedGroup === "Abandonner"){
-      console.log("Logout ok");
-			window.location.href = "login.html";
-    }
-    else{ 
-      populateKeysForGroup(selectedGroup);
-      switchMenu(1);
-    }
-   
-
-  } else if (e.key === "ArrowLeft" && currentMenuIndex === 1) {
-    switchMenu(0);
-
-  } else if (e.key === "Enter" && currentMenuIndex === 1) {
-    const selected = sections[currentIndex];
-    const key = selected.querySelector(".key-column")?.textContent?.trim();
-    const value = selected.querySelector(".value-column")?.textContent?.trim();
-    const item = loadedKeys.find(e => e.key === key);
-
-    if (item) {
-      modalKeyTitle.textContent = item.key;
-
-
-      if (item.type === "int" || item.type === "float") {
-        modalValueInput.classList.remove("hidden");
-        triggerButton.classList.add("hidden");
-        modalValueInput.type = "number";
-        modalValueInput.value = item.value;
-      }
-      else if (item.value === "#button#"){
-        modalValueInput.classList.add("hidden");
-        triggerButton.classList.remove("hidden");
-        modalValueInput.type = "button";
-        modalValueInput.value = item.value;
-      }
-      else {
-        modalValueInput.classList.remove("hidden");
-        triggerButton.classList.add("hidden");
-        modalValueInput.type = "text";
-        modalValueInput.value = item.value;
-      }
-
-      if (item.writable === "true") {
-        modalValueInput.removeAttribute("readonly");
-      } else {
-        modalValueInput.setAttribute("readonly", true);
-      }
-
-    } else {
-      modalKeyTitle.textContent = key;
-      modalValueInput.type = "text";
-      modalValueInput.value = "";
-      modalValueInput.setAttribute("readonly", true);
-    }
-
-    modal.classList.remove("hidden");
-    modalValueInput.focus();
-
-  } else if (e.key === "Enter" && currentMenuIndex === 0) {
-    const selectedGroup = sections[currentIndex].textContent;
-    if(selectedGroup === "Abandonner"){
-      console.log("Logout ok");
-			window.location.href = "login.html";
-    }
-    else{ 
-      populateKeysForGroup(selectedGroup);
-      switchMenu(1);
-    }
-
-  } else if (e.key === "Escape" && currentMenuIndex === 1) {
-    switchMenu(0);
-  }
-});
+function updateHeaderTime() {
+  const timeSpan = document.querySelector('.header-time');
+  if (!timeSpan) return;
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  timeSpan.textContent = `${hh}:${mm}`;
+}
 
 // Modal
 const modal = document.getElementById("modal");
 const modalKeyTitle = document.getElementById("modal-key-title");
 const modalValueInput = document.getElementById("modal-value-input");
-const triggerButton = document.getElementById("modal-trigger-button");
 const modalClose = document.getElementById("modal-close");
-const modalSave = document.getElementById("modal-save");
-
-if (modalClose) {
-  modalClose.addEventListener("click", () => {
-    modal.classList.add("hidden");
-  });
-}
-
-if (modalSave) {
-  modalSave.addEventListener("click", () => {
-    modal.classList.add("hidden");
-  });
-}
+const modalCloseX = document.getElementById("modal-close-x");
+if (modalClose) modalClose.addEventListener("click", () => modal.classList.add("hidden"));
+if (modalCloseX) modalCloseX.addEventListener("click", () => modal.classList.add("hidden"));

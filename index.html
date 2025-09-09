@@ -6,38 +6,38 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <div id="menu1" class="menu active">
-    <div class="header">
-     <div>Page de maintenance </div>
-     <div> <img src="img/sncf_logo.png" alt="SNCF Logo" class="logo"> </div>
+  <div class="custom-header">
+    <div>
+      <span class="header-label">#125 | OTC430</span>
+      <span class="header-time"></span>
     </div>
+    <div>
+      <span class="header-icons">
+        <img src="img/icon.jpg" alt="Icone" style="height:42px;" />
+      </span>
+    </div>
+  </div>
+ 
+  <div id="nav-bar" class="nav-bar"></div>
+  <div id="menu1" class="menu active">
   </div>
 
   <div id="menu2" class="menu">
-    <div class="header">
-     <div> Paramètres </div>
-     <div> <img src="img/sncf_logo.png" alt="SNCF Logo" class="logo"> </div>
-    </div>
-    <div class="section-container">
-    </div>
+    <div class="section-container"></div>
   </div>
 
-
-
-<div id="modal" class="modal hidden">
-  <div class="modal-content">
-    <h2 id="modal-key-title">Clés</h2>
-    <input type="text" id="modal-value-input" class="modal-input" />
-    <button id="modal-trigger-button" class="modal-trigger hidden">Déclencher</button>
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <button id="modal-close-x" class="modal-close-x">&times;</button>
+      <h2 id="modal-key-title">Clés</h2>
+      <p id="modal-value-text" class="modal-text"></p>
+      <button id="modal-trigger-button" class="modal-trigger hidden">Déclencher</button>
+    </div>
   </div>
-</div>
 
   <script src="app/jquery-3.2.1.min.js"></script>
   <script src="app/udisplayCalls.js"></script>
   <script src="app/script.js"></script>
 </body>
-
-
 </html>
 

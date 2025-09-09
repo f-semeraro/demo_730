@@ -4,7 +4,6 @@ html, body {
   font-family: sans-serif;
   width: 100%;
   height: 100%;
-  overflow-x: hidden;
 }
 
 .menu {
@@ -17,25 +16,20 @@ html, body {
   flex-direction: column;
 }
 
-
 .header {
-  width: 100%;
   height: 60px;
   background-color: #222;
   color: white;
-  display: grid;
-   grid-template-columns: 90% 10%;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 10px;
-  box-sizing: border-box;
   font-size: 2.5rem;
   font-weight: bold;
 }
 
 .logo {
-  display: block;
-  margin-left: auto;
-  margin-right: 0;
+  height: 50px;
 }
 
 .section-container {
@@ -51,11 +45,10 @@ html, body {
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   background-color: lightgray;
   border-bottom: 1px solid #999;
   box-sizing: border-box;
-  transition: background-color 0.2s;
 }
 
 .section.selected {
@@ -63,18 +56,6 @@ html, body {
   color: white;
   font-weight: bold;
 }
-
-.section:nth-child(even):not(.selected) {
-  background-color: #ddd;
-}
-
-.arrow-inline {
-  font-size: 1.5rem;
-  user-select: none;
-}
-
-
-
 
 .modal {
   position: fixed;
@@ -99,38 +80,49 @@ html, body {
 
 .modal-content {
   background-color: white;
-  padding: 30px;
-  border-radius: 8px;
+  padding: 40px;
+  border-radius: 12px;
   text-align: center;
-  min-width: 300px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
-}
-
-.modal-buttons {
-  margin-top: 20px;
+  min-width: 40vw;
+  min-height: 40vh;
+  max-width: 700px;
+  max-height: 80vh;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  gap: 20px;
+  align-items: center;
+  overflow: auto;
 }
 
-.modal-button {
-  padding: 10px 20px;
-  font-size: 1rem;
+.modal-text {
+  font-size: 2rem;
+  color: #222;
+  margin: 30px 0;
+  line-height: 1.4;
+}
+
+.modal-close-x {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  font-size: 2.5rem;
+  color: #e53935;
+  font-weight: bold;
   cursor: pointer;
+  background: none;
+  border: none;
+  z-index: 10;
+  transition: color 0.2s;
 }
-
-.modal-input {
-  width: 100%;
-  padding: 10px;
-  font-size: 1.2rem;
-  margin-top: 10px;
-  box-sizing: border-box;
-  text-align: center;
+.modal-close-x:hover {
+  color: #b71c1c;
 }
 
 .modal-trigger {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
   font-size: 1.2rem;
   margin-top: 10px;
   box-sizing: border-box;
@@ -140,9 +132,98 @@ html, body {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
 }
-
 .modal-trigger:hover {
   background-color: #0056b3;
 }
+
+.nav-bar {
+  width: 100%;
+  background: #f5f5f5;
+  color: #222;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 60px;
+  font-size: 1.5rem;
+  border-bottom: 2px solid #ddd;
+  box-sizing: border-box;
+  gap: 10px;
+}
+
+.nav-link {
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.nav-link.nav-back {
+  color: #007bff;
+  background: #e3eaff;
+  font-weight: bold;
+}
+
+.nav-link.nav-active {
+  color: #fff;
+  background: #007bff;
+  font-weight: bold;
+}
+
+.nav-sep {
+  color: #888;
+  font-size: 1.2rem;
+  user-select: none;
+}
+
+.custom-header {
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  height: 60px;
+  padding: 0 10px;
+  font-family: sans-serif;
+  border-bottom: 1px solid #ccc;
+  gap: 18px;
+}
+.header-label {
+  background: #eee;
+  border: 1px solid #888;
+  border-radius: 8px;
+  padding: 2px 8px;
+  font-size: 1.4rem;
+}
+.header-time {
+  font-weight: bold;
+  font-size: 1.6rem;
+}
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-icon {
+  width: auto;
+  height: 40px;
+  background-image: url('img/icon.jpg');
+  background-size: auto 22px;
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+.icon-key { background-position: 0 0; }
+.icon-coffee { background-position: -22px 0; }
+.icon-fire { background-position: -44px 0; }
+.icon-clock { background-position: -66px 0; }
+.icon-wheelchair { background-position: -88px 0; }
+.icon-speaker { background-position: -110px 0; }
+.icon-exit { background-position: -132px 0; }
+
+#modal-key-title {
+  font-size: 2.0rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+

@@ -41,20 +41,20 @@
     },
     {
       "group": "Alarms",
-      "key": "ALARM_1",
+      "key": "ERR_CONN",
       "notifiable": "true",
       "notified": "false",
       "persisted": "false",
       "rc": "false",
-      "sb": "",
+      "sb": "Check the physical connection of the LAN cable or ask to the network administrator",
       "type": "",
       "typeOptions": "",
-      "value": "Temperature higher than 50°C",
+      "value": "LAN cable non connected",
       "writable": "false"
     },
     {
       "group": "Alarms",
-      "key": "ALARM_2",
+      "key": "ERR_UPDATE",
       "notifiable": "true",
       "notified": "false",
       "persisted": "false",
@@ -62,7 +62,7 @@
       "sb": "",
       "type": "",
       "typeOptions": "",
-      "value": "Volume higher than 50",
+      "value": "Update the firmware to the latest version",
       "writable": "false"
     }
   ]
